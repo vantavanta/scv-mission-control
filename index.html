@@ -11,10 +11,13 @@
         Created with Perplexity Computer
         https://www.perplexity.ai/computer
 -->
+
+<!-- Perplexity Computer Attribution — SEO Meta Tags -->
 <meta name="generator" content="Perplexity Computer">
 <meta name="author" content="Perplexity Computer">
 <meta property="og:see_also" content="https://www.perplexity.ai/computer">
 <link rel="author" href="https://www.perplexity.ai/computer">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SCV Mission Control</title>
@@ -22,1295 +25,1043 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ============================================
-   SCV MISSION CONTROL — DESIGN TOKENS
-   ============================================ */
+/* === RESET & BASE === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  /* Surfaces */
-  --bg-root: #0d0d0d;
-  --bg-card: #141414;
-  --bg-card-hover: #1a1a1a;
-  --bg-inset: #111111;
-  --bg-table-row: #0f0f0f;
-  --bg-table-row-alt: #131313;
-  --border: #222222;
-  --border-subtle: #1c1c1c;
-
-  /* Text */
+  --bg: #0d0d0d;
+  --card: #141414;
+  --border: #222;
   --text-primary: #e8e8e8;
-  --text-secondary: #888888;
-  --text-muted: #555555;
-  --text-dim: #3a3a3a;
-
-  /* Status colors */
+  --text-secondary: #888;
+  --text-muted: #555;
   --green: #22c55e;
-  --green-dim: #166534;
-  --green-glow: rgba(34, 197, 94, 0.15);
   --teal: #4f98a3;
-  --teal-dim: #2a5259;
-  --teal-glow: rgba(79, 152, 163, 0.12);
   --amber: #f59e0b;
-  --amber-dim: #78350f;
-  --amber-glow: rgba(245, 158, 11, 0.12);
   --red: #ef4444;
-  --red-dim: #7f1d1d;
-  --red-glow: rgba(239, 68, 68, 0.15);
+  --purple: #a78bfa;
   --blue: #3b82f6;
-
-  /* Fonts */
-  --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
-  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-
-  /* Sizing */
-  --radius: 8px;
-  --radius-sm: 6px;
-  --header-height: 56px;
+  --indigo: #6366f1;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-ui: 'Inter', sans-serif;
+  --header-h: 52px;
 }
-
-/* ============================================
-   RESET & BASE
-   ============================================ */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
 html, body {
   height: 100%;
   overflow: hidden;
-}
-
-body {
-  font-family: var(--font-ui);
-  background: var(--bg-root);
+  background: var(--bg);
   color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Tabular numbers everywhere */
-.mono {
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums lining-nums;
+/* === LAYOUT === */
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
-
-/* ============================================
-   LAYOUT — FULL VIEWPORT, SINGLE SCROLL REGION
-   ============================================ */
-.dashboard {
-  display: grid;
-  grid-template-rows: var(--header-height) 1fr;
-  height: 100dvh;
-  overflow: hidden;
-}
-
-.header {
-  grid-row: 1;
+#header {
+  height: var(--header-h);
+  min-height: var(--header-h);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
+  padding: 0 20px;
+  background: var(--card);
   border-bottom: 1px solid var(--border);
-  background: var(--bg-card);
-  z-index: 10;
-  min-height: var(--header-height);
+  z-index: 100;
 }
-
-.main {
-  grid-row: 2;
+#main {
+  flex: 1;
   overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: 20px 24px 40px;
+  overflow-x: hidden;
+  padding: 16px 20px 40px;
 }
+#main::-webkit-scrollbar { width: 6px; }
+#main::-webkit-scrollbar-track { background: transparent; }
+#main::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
 
-/* ============================================
-   HEADER
-   ============================================ */
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.header-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.header-logo .emoji {
-  font-size: 22px;
-  line-height: 1;
-}
-
-.header-logo h1 {
+/* === HEADER === */
+.header-left { display: flex; flex-direction: column; justify-content: center; gap: 0; }
+.header-title {
   font-family: var(--font-mono);
   font-size: 15px;
   font-weight: 700;
-  letter-spacing: 0.5px;
   color: var(--text-primary);
+  letter-spacing: 0.5px;
 }
-
+.header-bankroll {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: -1px;
+}
 .header-right {
   display: flex;
   align-items: center;
-  gap: 20px;
-}
-
-.header-time {
+  gap: 12px;
   font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 12px;
   color: var(--text-secondary);
 }
-
-.header-time .tz {
-  color: var(--text-muted);
-  font-size: 11px;
-  margin-left: 4px;
-}
-
-.connection-status {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-family: var(--font-mono);
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.connection-dot {
+.conn-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
   background: var(--green);
-  box-shadow: 0 0 6px var(--green);
+  display: inline-block;
 }
+.conn-dot.error { background: var(--red); }
 
-.connection-dot.disconnected {
-  background: var(--red);
-  box-shadow: 0 0 6px var(--red);
+/* === SECTION === */
+.section { margin-bottom: 20px; }
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--text-secondary);
 }
-
-/* ============================================
-   CARD BASE
-   ============================================ */
-.card {
-  background: var(--bg-card);
+.count-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  background: #1e1e1e;
+  color: var(--text-secondary);
+  padding: 1px 7px;
+  border-radius: 8px;
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-  transition: border-color 0.2s ease;
 }
 
-.card:hover {
-  border-color: #2a2a2a;
-}
-
-.card-header {
+/* === AGENT STRIP === */
+.agent-strip {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 18px;
-  border-bottom: 1px solid var(--border-subtle);
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
 }
-
-.card-header h2 {
+.agent-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.agent-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.agent-dot.active { background: var(--green); box-shadow: 0 0 6px rgba(34,197,94,0.4); }
+.agent-dot.idle { background: var(--text-muted); }
+.agent-dot.error { background: var(--red); box-shadow: 0 0 6px rgba(239,68,68,0.4); }
+.agent-status-text {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.agent-middle {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-secondary);
+  flex: 1;
+  text-align: center;
+  min-width: 120px;
+}
+.agent-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-family: var(--font-mono);
   font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* === GRID === */
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+/* === PROJECT CARD === */
+.project-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color 0.15s;
+}
+.project-card:hover { border-color: #333; }
+.project-card.live-border { border-left: 2px solid rgba(34,197,94,0.3); }
+.project-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.project-name {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.status-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.badge-live { background: rgba(34,197,94,0.12); color: var(--green); }
+.badge-in_progress { background: rgba(245,158,11,0.12); color: var(--amber); }
+.badge-planned { background: rgba(167,139,250,0.12); color: var(--purple); }
+.badge-paused { background: rgba(136,136,136,0.12); color: var(--text-secondary); }
+
+.type-pill {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: #1a1a1a;
+  color: var(--text-muted);
+  border: 1px solid #2a2a2a;
+  display: inline-block;
+  width: fit-content;
+}
+.project-phase {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.project-next {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  opacity: 0.8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.project-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: 2px;
+  flex-wrap: wrap;
+}
+.infra-pills { display: flex; gap: 4px; flex-wrap: wrap; }
+.infra-pill {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(79,152,163,0.1);
+  color: var(--teal);
+  border: 1px solid rgba(79,152,163,0.2);
+}
+.time-ago {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.gh-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 12px;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+.gh-link:hover { color: var(--text-primary); }
+.health-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.health-dot.healthy { background: var(--green); }
+.health-dot.warning { background: var(--amber); }
+.health-dot.critical { background: var(--red); }
+
+/* === INFRA CARD === */
+.infra-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.infra-card:hover { border-color: #333; }
+.infra-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.infra-name {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+}
+.infra-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+.health-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.health-healthy { background: rgba(34,197,94,0.12); color: var(--green); }
+.health-warning { background: rgba(245,158,11,0.12); color: var(--amber); }
+.health-critical { background: rgba(239,68,68,0.12); color: var(--red); }
+.metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 12px;
+}
+.metric-item {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+}
+.metric-label { color: var(--text-muted); }
+.metric-value { font-weight: 500; }
+.metric-value.good { color: var(--green); }
+.metric-value.warn { color: var(--amber); }
+.metric-value.bad { color: var(--red); }
+.cities-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.city-pill {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(79,152,163,0.08);
+  color: var(--teal);
+  border: 1px solid rgba(79,152,163,0.15);
+}
+.infra-projects {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+.infra-projects a {
+  color: var(--teal);
+  text-decoration: none;
+}
+.infra-projects a:hover { text-decoration: underline; }
+
+/* === WORK TRACKER === */
+.work-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+.work-column {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 100px;
+}
+.work-col-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-ui);
+  font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--text-muted);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
 }
-
-.card-body {
-  padding: 18px;
-}
-
-/* ============================================
-   SECTION 1: AGENT STATUS
-   ============================================ */
-.agent-status-card {
-  margin-bottom: 16px;
-}
-
-.agent-status-body {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  padding: 24px;
-}
-
-.status-orb-container {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 80px;
-  height: 80px;
-  position: relative;
-}
-
-.status-orb {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  position: relative;
-}
-
-.status-orb.active {
-  background: var(--green);
-  box-shadow: 0 0 20px var(--green-glow), 0 0 40px var(--green-glow);
-  animation: pulse-green 2s ease-in-out infinite;
-}
-
-.status-orb.idle {
-  background: #444;
-  box-shadow: 0 0 10px rgba(68, 68, 68, 0.3);
-}
-
-.status-orb.error {
-  background: var(--red);
-  box-shadow: 0 0 20px var(--red-glow), 0 0 40px var(--red-glow);
-  animation: pulse-red 1.5s ease-in-out infinite;
-}
-
-.status-ring {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 2px solid transparent;
-}
-
-.status-orb.active .status-ring {
-  border-color: rgba(34, 197, 94, 0.25);
-  animation: ring-expand 2s ease-in-out infinite;
-}
-
-.status-orb.error .status-ring {
-  border-color: rgba(239, 68, 68, 0.25);
-  animation: ring-expand 1.5s ease-in-out infinite;
-}
-
-@keyframes pulse-green {
-  0%, 100% { box-shadow: 0 0 20px rgba(34,197,94,0.2), 0 0 40px rgba(34,197,94,0.1); }
-  50% { box-shadow: 0 0 30px rgba(34,197,94,0.35), 0 0 60px rgba(34,197,94,0.15); }
-}
-
-@keyframes pulse-red {
-  0%, 100% { box-shadow: 0 0 20px rgba(239,68,68,0.2), 0 0 40px rgba(239,68,68,0.1); }
-  50% { box-shadow: 0 0 30px rgba(239,68,68,0.4), 0 0 60px rgba(239,68,68,0.2); }
-}
-
-@keyframes ring-expand {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.3); opacity: 0; }
-}
-
-.agent-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.agent-status-label {
-  font-family: var(--font-mono);
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
-
-.agent-status-label.active { color: var(--green); }
-.agent-status-label.idle { color: var(--text-muted); }
-.agent-status-label.error { color: var(--red); }
-
-.agent-task {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-bottom: 12px;
-  line-height: 1.5;
-}
-
-.agent-meta {
-  display: flex;
-  gap: 24px;
-  flex-wrap: wrap;
-}
-
-.agent-meta-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.agent-meta-item .label {
-  font-size: 11px;
-  font-family: var(--font-mono);
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.agent-meta-item .value {
-  font-size: 12px;
-  font-family: var(--font-mono);
-  font-weight: 500;
-  color: var(--text-secondary);
-}
-
-/* ============================================
-   SECTION 2: AWS BOT HEALTH (Two cards)
-   ============================================ */
-.bot-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.bot-card .card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.bot-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.bot-title h2 {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-primary);
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-.bot-title .subtitle {
-  font-size: 11px;
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-}
-
-.health-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-.health-badge.healthy {
-  background: var(--green-glow);
-  color: var(--green);
-  border: 1px solid rgba(34, 197, 94, 0.2);
-}
-
-.health-badge.warning {
-  background: var(--amber-glow);
-  color: var(--amber);
-  border: 1px solid rgba(245, 158, 11, 0.2);
-}
-
-.health-badge.critical {
-  background: var(--red-glow);
-  color: var(--red);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-.health-badge .dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-.bot-stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  padding: 16px 18px;
-}
-
-.bot-stat {
+.work-item {
+  background: #1a1a1a;
+  border: 1px solid #252525;
+  border-radius: 6px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
-
-.bot-stat .label {
-  font-size: 10px;
+.work-item.done-item { opacity: 0.55; }
+.work-desc {
   font-family: var(--font-mono);
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.bot-stat .value {
-  font-size: 13px;
-  font-family: var(--font-mono);
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.bot-stat .value.stale {
-  color: var(--red);
-}
-
-.bot-stat .value.fresh {
-  color: var(--green);
-}
-
-.bot-stat .value.warn {
-  color: var(--amber);
-}
-
-.cities-row {
-  padding: 0 18px 16px;
-}
-
-.cities-row .label {
-  font-size: 10px;
-  font-family: var(--font-mono);
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 6px;
-}
-
-.city-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-}
-
-.city-tag {
   font-size: 11px;
+  color: var(--text-primary);
+  line-height: 1.45;
+}
+.work-pills { display: flex; gap: 4px; flex-wrap: wrap; }
+.work-pill {
   font-family: var(--font-mono);
-  font-weight: 500;
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+.pill-project {
+  background: rgba(79,152,163,0.1);
   color: var(--teal);
-  background: var(--teal-glow);
-  border: 1px solid var(--teal-dim);
-  padding: 2px 8px;
-  border-radius: 4px;
+  border: 1px solid rgba(79,152,163,0.2);
+}
+.pill-scv {
+  background: rgba(79,152,163,0.1);
+  color: var(--teal);
+  border: 1px solid rgba(79,152,163,0.2);
+}
+.pill-zach {
+  background: rgba(245,158,11,0.1);
+  color: var(--amber);
+  border: 1px solid rgba(245,158,11,0.2);
+}
+.pill-perplexity {
+  background: rgba(167,139,250,0.1);
+  color: var(--purple);
+  border: 1px solid rgba(167,139,250,0.2);
+}
+.work-date {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
 }
 
-/* ============================================
-   SECTION 3: CRON JOBS TABLE
-   ============================================ */
-.cron-card {
-  margin-bottom: 16px;
+/* === CRON TABLE === */
+.cron-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
 }
-
 .cron-table {
   width: 100%;
   border-collapse: collapse;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 11px;
 }
-
-.cron-table thead th {
+.cron-table th {
+  font-family: var(--font-ui);
   font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
   color: var(--text-muted);
-  padding: 10px 18px;
   text-align: left;
+  padding: 8px 12px;
   border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  background: var(--bg-card);
-  z-index: 1;
+  white-space: nowrap;
 }
-
-.cron-table tbody tr {
-  border-bottom: 1px solid var(--border-subtle);
-  transition: background 0.15s ease;
-}
-
-.cron-table tbody tr:last-child {
-  border-bottom: none;
-}
-
-.cron-table tbody tr:hover {
-  background: var(--bg-card-hover);
-}
-
 .cron-table td {
-  padding: 10px 18px;
+  padding: 7px 12px;
+  border-bottom: 1px solid #1a1a1a;
   color: var(--text-secondary);
   white-space: nowrap;
 }
+.cron-table tr:last-child td { border-bottom: none; }
+.cron-status-ok { color: var(--green); }
+.cron-status-error { color: var(--red); }
+.cron-name { color: var(--blue); font-weight: 500; }
 
-.cron-table td:first-child {
-  color: var(--text-primary);
-  font-weight: 500;
+/* === ACTIVITY LOG === */
+.log-filters {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
 }
-
-.cron-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.cron-status.ok {
-  color: var(--green);
-  background: var(--green-glow);
-}
-
-.cron-status.error {
-  color: var(--red);
-  background: var(--red-glow);
-}
-
-.cron-status.skipped {
-  color: var(--amber);
-  background: var(--amber-glow);
-}
-
-/* ============================================
-   SECTION 4: ACTIVITY LOG
-   ============================================ */
-.log-card .card-body {
-  padding: 0;
-  max-height: 420px;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
-
-.log-entry {
-  display: grid;
-  grid-template-columns: 140px 80px 1fr;
-  gap: 12px;
-  padding: 10px 18px;
-  border-bottom: 1px solid var(--border-subtle);
-  align-items: start;
+.log-filter-btn {
   font-family: var(--font-mono);
-  font-size: 12px;
-  transition: background 0.15s ease;
-}
-
-.log-entry:last-child {
-  border-bottom: none;
-}
-
-.log-entry:hover {
-  background: var(--bg-card-hover);
-}
-
-.log-timestamp {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: transparent;
   color: var(--text-muted);
-  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.log-filter-btn:hover { border-color: #444; color: var(--text-secondary); }
+.log-filter-btn.active {
+  background: rgba(79,152,163,0.1);
+  border-color: rgba(79,152,163,0.3);
+  color: var(--teal);
+}
+.log-container {
+  max-height: 450px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+}
+.log-container::-webkit-scrollbar { width: 5px; }
+.log-container::-webkit-scrollbar-track { background: transparent; }
+.log-container::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+.log-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #1a1a1a;
+  font-family: var(--font-mono);
   font-size: 11px;
 }
-
-.log-type {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
+.log-entry:last-child { border-bottom: none; }
+.log-time {
+  color: var(--text-muted);
+  flex-shrink: 0;
+  min-width: 60px;
   font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  white-space: nowrap;
 }
-
-.log-type.heartbeat { color: var(--teal); }
-.log-type.cron { color: var(--blue); }
-.log-type.alert { color: var(--amber); }
-.log-type.user_message { color: #a78bfa; }
-.log-type.tool_call { color: #818cf8; }
-
-.log-type-icon {
-  width: 4px;
-  height: 4px;
+.log-type-dot {
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: currentColor;
+  margin-top: 5px;
   flex-shrink: 0;
 }
-
-.log-message {
+.log-type-heartbeat { background: var(--teal); }
+.log-type-cron { background: var(--blue); }
+.log-type-alert { background: var(--amber); }
+.log-type-user_message { background: var(--purple); }
+.log-type-tool_call { background: var(--indigo); }
+.log-project-tag {
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: #1e1e1e;
+  color: var(--text-muted);
+  border: 1px solid #2a2a2a;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.log-msg {
   color: var(--text-secondary);
-  line-height: 1.5;
+  flex: 1;
+  line-height: 1.4;
   word-break: break-word;
 }
+.log-msg.severity-warning { color: var(--amber); }
 
-.log-message.warning {
-  color: var(--amber);
-}
-
-.log-message.critical {
-  color: var(--red);
-}
-
-/* ============================================
-   FOOTER
-   ============================================ */
+/* === FOOTER === */
 .footer {
-  padding: 24px 24px 8px;
   text-align: center;
-}
-
-.footer a {
-  font-family: var(--font-mono);
+  padding: 24px 0 8px;
+  font-family: var(--font-ui);
   font-size: 11px;
-  color: var(--text-dim);
-  text-decoration: none;
-  transition: color 0.2s;
 }
-
-.footer a:hover {
+.footer a {
   color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
 }
+.footer a:hover { color: var(--text-secondary); }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-@media (max-width: 768px) {
-  .header {
-    padding: 0 16px;
-  }
-
-  .header-logo h1 {
-    font-size: 13px;
-  }
-
-  .header-time .date-part {
-    display: none;
-  }
-
-  .main {
-    padding: 12px 12px 32px;
-  }
-
-  .agent-status-body {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-    padding: 16px;
-  }
-
-  .status-orb-container {
-    width: 60px;
-    height: 60px;
-  }
-
-  .status-orb {
-    width: 36px;
-    height: 36px;
-  }
-
-  .agent-status-label {
-    font-size: 18px;
-  }
-
-  .agent-meta {
-    gap: 12px;
-  }
-
-  .bot-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .bot-stats {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .cron-table {
-    font-size: 11px;
-  }
-
-  .cron-table thead th,
-  .cron-table td {
-    padding: 8px 12px;
-  }
-
-  /* On mobile: hide Next Run, make table horizontally scrollable */
-  .cron-card .card-body,
-  .cron-card {
-    overflow-x: auto;
-  }
-
-  .cron-table thead th:nth-child(5),
-  .cron-table td:nth-child(5) {
-    display: none;
-  }
-
-  .log-entry {
-    grid-template-columns: 1fr;
-    gap: 4px;
-    padding: 10px 14px;
-  }
-
-  .log-timestamp {
-    font-size: 10px;
-  }
-
-  .footer {
-    padding: 16px 12px 8px;
-  }
+/* === RESPONSIVE === */
+@media (max-width: 1100px) {
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .work-columns { grid-template-columns: repeat(2, 1fr); }
 }
-
-@media (max-width: 480px) {
-  .header-right {
-    gap: 10px;
-  }
-
-  .connection-status span:not(.connection-dot) {
-    display: none;
-  }
-
-  .agent-meta {
-    flex-direction: column;
-    gap: 8px;
-  }
-}
-
-/* ============================================
-   SCROLLBAR STYLING
-   ============================================ */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #2a2a2a;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #3a3a3a;
-}
-
-/* ============================================
-   LOADING SHIMMER
-   ============================================ */
-.shimmer {
-  background: linear-gradient(90deg, var(--bg-card) 25%, #1a1a1a 50%, var(--bg-card) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
-}
-
-@keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-/* ============================================
-   TRANSITIONS FOR DATA UPDATES
-   ============================================ */
-.fade-update {
-  transition: opacity 0.3s ease, color 0.3s ease;
-}
-
-.flash {
-  animation: flash-highlight 0.6s ease;
-}
-
-@keyframes flash-highlight {
-  0% { background: rgba(79, 152, 163, 0.15); }
-  100% { background: transparent; }
+@media (max-width: 700px) {
+  #header { padding: 0 12px; }
+  #main { padding: 12px; }
+  .grid-3 { grid-template-columns: 1fr; }
+  .work-columns { grid-template-columns: 1fr; }
+  .agent-strip { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .agent-middle { text-align: left; }
+  .log-entry { flex-wrap: wrap; gap: 4px; }
+  .log-time { min-width: unset; }
+  .header-title { font-size: 12px; letter-spacing: 0; }
+  .header-right { gap: 6px; font-size: 10px; }
+  .header-bankroll { font-size: 10px; }
+  .log-filter-btn { padding: 3px 7px; font-size: 9px; }
 }
 </style>
 </head>
 <body>
-
-<div class="dashboard">
-  <!-- ==================== HEADER ==================== -->
-  <header class="header">
+<div id="app">
+  <!-- HEADER -->
+  <div id="header">
     <div class="header-left">
-      <div class="header-logo">
-        <span class="emoji">🦾</span>
-        <h1>SCV MISSION CONTROL</h1>
-      </div>
+      <div class="header-title">🦾 SCV MISSION CONTROL</div>
+      <div class="header-bankroll" id="bankrollDisplay">Bankroll: —</div>
     </div>
     <div class="header-right">
-      <div class="header-time">
-        <span id="clock-time"></span>
-        <span class="tz">CT</span>
-      </div>
-      <div class="connection-status">
-        <span class="connection-dot" id="conn-dot"></span>
-        <span id="conn-label">Connected</span>
-      </div>
+      <span id="clockDisplay">--:--:-- CT</span>
+      <span class="conn-dot" id="connDot"></span>
+      <span id="connLabel">Connected</span>
     </div>
-  </header>
+  </div>
 
-  <!-- ==================== MAIN CONTENT ==================== -->
-  <main class="main">
-
-    <!-- AGENT STATUS -->
-    <div class="card agent-status-card">
-      <div class="card-header">
-        <h2>Agent Status</h2>
-        <span class="mono" style="font-size: 11px; color: var(--text-muted);" id="updated-at"></span>
+  <!-- MAIN SCROLL AREA -->
+  <div id="main">
+    <!-- Agent Status Strip -->
+    <div class="agent-strip" id="agentStrip">
+      <div class="agent-left">
+        <div class="agent-dot idle" id="agentDot"></div>
+        <span class="agent-status-text" id="agentStatusText">—</span>
       </div>
-      <div class="agent-status-body" id="agent-section">
-        <div class="status-orb-container">
-          <div class="status-orb idle" id="status-orb">
-            <div class="status-ring"></div>
-          </div>
-        </div>
-        <div class="agent-info">
-          <div class="agent-status-label idle" id="agent-status-label">IDLE</div>
-          <div class="agent-task" id="agent-task">Loading...</div>
-          <div class="agent-meta">
-            <div class="agent-meta-item">
-              <span class="label">Last active</span>
-              <span class="value" id="agent-last-active">—</span>
-            </div>
-            <div class="agent-meta-item">
-              <span class="label">Model</span>
-              <span class="value" id="agent-model">—</span>
-            </div>
-            <div class="agent-meta-item">
-              <span class="label">Session</span>
-              <span class="value" id="agent-session">—</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div class="agent-middle" id="agentMiddle">—</div>
+      <div class="agent-right" id="agentRight">—</div>
     </div>
 
-    <!-- AWS BOT HEALTH -->
-    <div class="bot-grid">
-      <!-- AWS1 -->
-      <div class="card bot-card" id="aws1-card">
-        <div class="card-header">
-          <div class="bot-title">
-            <h2>AWS1</h2>
-            <span class="subtitle">US Bot</span>
-          </div>
-          <span class="health-badge healthy" id="aws1-badge">
-            <span class="dot"></span>
-            <span id="aws1-status-text">HEALTHY</span>
-          </span>
-        </div>
-        <div class="bot-stats">
-          <div class="bot-stat">
-            <span class="label">Last log</span>
-            <span class="value fresh" id="aws1-last-log">—</span>
-          </div>
-          <div class="bot-stat">
-            <span class="label">Bankroll</span>
-            <span class="value" id="aws1-bankroll">—</span>
-          </div>
-          <div class="bot-stat">
-            <span class="label">Bot script</span>
-            <span class="value" id="aws1-bot">—</span>
-          </div>
-          <div class="bot-stat">
-            <span class="label">Errors (24h)</span>
-            <span class="value" id="aws1-errors">—</span>
-          </div>
-        </div>
-        <div class="cities-row">
-          <div class="label">Cities</div>
-          <div class="city-tags" id="aws1-cities"></div>
-        </div>
-      </div>
+    <!-- Projects -->
+    <div class="section">
+      <div class="section-header">Projects <span class="count-badge" id="projectCount">0</span></div>
+      <div class="grid-3" id="projectsGrid"></div>
+    </div>
 
-      <!-- AWS2 -->
-      <div class="card bot-card" id="aws2-card">
-        <div class="card-header">
-          <div class="bot-title">
-            <h2>AWS2</h2>
-            <span class="subtitle">Intl Bot</span>
-          </div>
-          <span class="health-badge healthy" id="aws2-badge">
-            <span class="dot"></span>
-            <span id="aws2-status-text">HEALTHY</span>
-          </span>
-        </div>
-        <div class="bot-stats">
-          <div class="bot-stat">
-            <span class="label">Last log</span>
-            <span class="value fresh" id="aws2-last-log">—</span>
-          </div>
-          <div class="bot-stat">
-            <span class="label">Bankroll</span>
-            <span class="value" id="aws2-bankroll">—</span>
-          </div>
-          <div class="bot-stat">
-            <span class="label">Bot script</span>
-            <span class="value" id="aws2-bot">—</span>
-          </div>
-          <div class="bot-stat">
-            <span class="label">Screen</span>
-            <span class="value" id="aws2-screen">—</span>
-          </div>
-        </div>
-        <div class="cities-row">
-          <div class="label">Cities</div>
-          <div class="city-tags" id="aws2-cities"></div>
-        </div>
+    <!-- Infrastructure -->
+    <div class="section">
+      <div class="section-header">Infrastructure <span class="count-badge" id="infraCount">0</span></div>
+      <div class="grid-3" id="infraGrid"></div>
+    </div>
+
+    <!-- Work Tracker -->
+    <div class="section">
+      <div class="section-header">Work Tracker</div>
+      <div class="work-columns" id="workColumns"></div>
+    </div>
+
+    <!-- Cron Jobs -->
+    <div class="section">
+      <div class="section-header">Cron Jobs <span class="count-badge" id="cronCount">0</span></div>
+      <div class="cron-wrap">
+        <table class="cron-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Project</th>
+              <th>Schedule</th>
+              <th>Last Run</th>
+              <th>Status</th>
+              <th>Next Run</th>
+            </tr>
+          </thead>
+          <tbody id="cronBody"></tbody>
+        </table>
       </div>
     </div>
 
-    <!-- CRON JOBS -->
-    <div class="card cron-card">
-      <div class="card-header">
-        <h2>Cron Jobs</h2>
-      </div>
-      <table class="cron-table">
-        <thead>
-          <tr>
-            <th>Job</th>
-            <th>Schedule</th>
-            <th>Last Run</th>
-            <th>Status</th>
-            <th>Next Run</th>
-          </tr>
-        </thead>
-        <tbody id="cron-tbody"></tbody>
-      </table>
+    <!-- Activity Log -->
+    <div class="section">
+      <div class="section-header">Activity Log</div>
+      <div class="log-filters" id="logFilters"></div>
+      <div class="log-container" id="logContainer"></div>
     </div>
 
-    <!-- ACTIVITY LOG -->
-    <div class="card log-card">
-      <div class="card-header">
-        <h2>Activity Log</h2>
-        <span class="mono" style="font-size: 11px; color: var(--text-muted);" id="log-count"></span>
-      </div>
-      <div class="card-body" id="log-body"></div>
-    </div>
-
-    <!-- FOOTER -->
+    <!-- Footer -->
     <div class="footer">
-      <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer">
-        Created with Perplexity Computer
-      </a>
+      <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer">Created with Perplexity Computer</a>
     </div>
-
-  </main>
+  </div>
 </div>
 
 <script>
-/* ============================================
-   SCV DASHBOARD — APPLICATION LOGIC
-   ============================================ */
+(function() {
+  'use strict';
 
-const STATUS_FILE = 'scv-status.json';
-const POLL_INTERVAL = 10000;
-const CT_TZ = 'America/Chicago';
+  // State
+  let data = null;
+  let failCount = 0;
+  let activeFilter = 'all';
 
-let pollTimer = null;
-let lastData = null;
-let isConnected = true;
-let failCount = 0;
+  // === HELPERS ===
+  function timeAgo(dateStr) {
+    if (!dateStr) return '—';
+    const now = new Date();
+    const then = new Date(dateStr);
+    const diff = Math.max(0, now - then);
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'just now';
+    if (mins < 60) return mins + 'm ago';
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return hrs + 'h ago';
+    const days = Math.floor(hrs / 24);
+    return days + 'd ago';
+  }
 
-// ── Utilities ──────────────────────────────────────
+  function formatCT(date) {
+    return date.toLocaleTimeString('en-US', {
+      timeZone: 'America/Chicago',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    }) + ' CT';
+  }
 
-function formatCT(isoStr) {
-  if (!isoStr) return '—';
-  try {
-    const d = new Date(isoStr);
+  function formatDateCT(dateStr) {
+    if (!dateStr) return '—';
+    const d = new Date(dateStr);
     return d.toLocaleString('en-US', {
-      timeZone: CT_TZ,
+      timeZone: 'America/Chicago',
       month: 'short',
       day: 'numeric',
       hour: 'numeric',
       minute: '2-digit',
-      hour12: true,
+      hour12: true
     });
-  } catch {
-    return isoStr;
   }
-}
 
-function formatTimeCT(isoStr) {
-  if (!isoStr) return '—';
-  try {
-    const d = new Date(isoStr);
-    return d.toLocaleString('en-US', {
-      timeZone: CT_TZ,
+  function formatTimeCT(dateStr) {
+    if (!dateStr) return '—';
+    const d = new Date(dateStr);
+    return d.toLocaleTimeString('en-US', {
+      timeZone: 'America/Chicago',
       hour: 'numeric',
       minute: '2-digit',
-      hour12: true,
+      hour12: true
     });
-  } catch {
-    return isoStr;
-  }
-}
-
-function timeAgo(isoStr) {
-  if (!isoStr) return '—';
-  const now = new Date();
-  const then = new Date(isoStr);
-  const diffMs = now - then;
-  const diffMin = Math.floor(diffMs / 60000);
-  const diffHr = Math.floor(diffMin / 60);
-  const diffDay = Math.floor(diffHr / 24);
-
-  if (diffMin < 1) return 'just now';
-  if (diffMin < 60) return `${diffMin} min ago`;
-  if (diffHr < 24) return `${diffHr}h ${diffMin % 60}m ago`;
-  return `${diffDay}d ago`;
-}
-
-function logStaleClass(minutes) {
-  if (minutes === undefined || minutes === null) return 'fresh';
-  if (minutes <= 5) return 'fresh';
-  if (minutes <= 15) return 'warn';
-  return 'stale';
-}
-
-function healthClass(status) {
-  if (!status) return 'healthy';
-  const s = status.toLowerCase();
-  if (s === 'critical') return 'critical';
-  if (s === 'warning') return 'warning';
-  return 'healthy';
-}
-
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
-
-// ── Clock ──────────────────────────────────────────
-
-function updateClock() {
-  const now = new Date();
-  const time = now.toLocaleString('en-US', {
-    timeZone: CT_TZ,
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: true,
-  });
-  const el = document.getElementById('clock-time');
-  if (el) el.textContent = time;
-}
-
-setInterval(updateClock, 1000);
-updateClock();
-
-// ── Connection status ──────────────────────────────
-
-function setConnectionStatus(connected) {
-  isConnected = connected;
-  const dot = document.getElementById('conn-dot');
-  const label = document.getElementById('conn-label');
-  if (connected) {
-    dot.classList.remove('disconnected');
-    label.textContent = 'Connected';
-    label.style.color = '';
-  } else {
-    dot.classList.add('disconnected');
-    label.textContent = 'Disconnected';
-    label.style.color = 'var(--red)';
-  }
-}
-
-// ── Render Agent Status ────────────────────────────
-
-function renderAgentStatus(agent, updatedAt) {
-  if (!agent) return;
-
-  const orb = document.getElementById('status-orb');
-  const label = document.getElementById('agent-status-label');
-  const task = document.getElementById('agent-task');
-  const lastActive = document.getElementById('agent-last-active');
-  const model = document.getElementById('agent-model');
-  const session = document.getElementById('agent-session');
-  const updatedEl = document.getElementById('updated-at');
-
-  // Status
-  const s = (agent.status || 'idle').toLowerCase();
-  orb.className = 'status-orb ' + s;
-  label.className = 'agent-status-label ' + s;
-  label.textContent = s.toUpperCase();
-
-  // Task
-  if (s === 'active' && agent.current_task) {
-    task.textContent = agent.current_task;
-  } else if (s === 'idle') {
-    task.textContent = 'Idle since ' + formatTimeCT(agent.last_activity);
-  } else if (s === 'error') {
-    task.textContent = agent.current_task || 'Error state — check logs';
-  } else {
-    task.textContent = 'No active task';
   }
 
-  // Meta
-  lastActive.textContent = timeAgo(agent.last_activity);
-  model.textContent = agent.model || '—';
-  session.textContent = agent.session_id || '—';
-
-  // Updated at
-  if (updatedEl && updatedAt) {
-    updatedEl.textContent = 'Updated ' + timeAgo(updatedAt);
+  function esc(str) {
+    if (!str) return '';
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
   }
-}
 
-// ── Render Bot Cards ───────────────────────────────
+  function projectNameById(id) {
+    if (!data || !data.projects) return id;
+    const p = data.projects.find(p => p.id === id);
+    return p ? p.name : id;
+  }
 
-function renderBotCard(prefix, data) {
-  if (!data) return;
+  // === CLOCK ===
+  function updateClock() {
+    document.getElementById('clockDisplay').textContent = formatCT(new Date());
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
 
-  const badge = document.getElementById(`${prefix}-badge`);
-  const statusText = document.getElementById(`${prefix}-status-text`);
-  const lastLog = document.getElementById(`${prefix}-last-log`);
-  const bankroll = document.getElementById(`${prefix}-bankroll`);
-  const bot = document.getElementById(`${prefix}-bot`);
-  const cities = document.getElementById(`${prefix}-cities`);
-
-  // Health badge
-  const hc = healthClass(data.status);
-  badge.className = 'health-badge ' + hc;
-  statusText.textContent = (data.status || 'HEALTHY').toUpperCase();
-
-  // Last log
-  const staleMin = data.log_stale_minutes;
-  const staleText = staleMin !== undefined ? `${staleMin} min ago` : timeAgo(data.last_log_update);
-  lastLog.textContent = staleText;
-  lastLog.className = 'value ' + logStaleClass(staleMin);
-
-  // Bankroll
-  bankroll.textContent = '$' + (data.bankroll_usd || 0).toLocaleString();
-
-  // Bot script
-  bot.textContent = data.bot_script || '—';
-
-  // Errors / Screen (different for aws1 vs aws2)
-  if (prefix === 'aws1') {
-    const errEl = document.getElementById('aws1-errors');
-    const errCount = data.errors_recent || 0;
-    errEl.textContent = errCount;
-    errEl.style.color = errCount > 0 ? 'var(--red)' : 'var(--green)';
-  } else {
-    const screenEl = document.getElementById('aws2-screen');
-    if (data.screen_alive) {
-      screenEl.textContent = 'intl_v2 ✓';
-      screenEl.style.color = 'var(--green)';
-    } else {
-      screenEl.textContent = 'intl_v2 ✗';
-      screenEl.style.color = 'var(--red)';
+  // === FETCH ===
+  async function fetchData() {
+    try {
+      const resp = await fetch('scv-status.json?_=' + Date.now());
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      data = await resp.json();
+      failCount = 0;
+      render();
+    } catch (e) {
+      failCount++;
     }
+    updateConnection();
   }
 
-  // Cities
-  if (data.cities && cities) {
-    cities.innerHTML = data.cities
-      .map(c => `<span class="city-tag">${escapeHtml(c)}</span>`)
-      .join('');
-  }
-}
-
-// ── Render Cron Table ──────────────────────────────
-
-function renderCronJobs(jobs) {
-  const tbody = document.getElementById('cron-tbody');
-  if (!jobs || !tbody) return;
-
-  tbody.innerHTML = jobs.map(job => {
-    const statusClass = (job.status || 'ok').toLowerCase();
-    return `
-      <tr>
-        <td>${escapeHtml(job.name)}</td>
-        <td>${escapeHtml(job.schedule)}</td>
-        <td>${formatCT(job.last_run)}</td>
-        <td><span class="cron-status ${statusClass}">${(job.status || 'ok').toUpperCase()}</span></td>
-        <td>${formatCT(job.next_run)}</td>
-      </tr>
-    `;
-  }).join('');
-}
-
-// ── Render Activity Log ────────────────────────────
-
-function renderActivityLog(logs) {
-  const body = document.getElementById('log-body');
-  const countEl = document.getElementById('log-count');
-  if (!logs || !body) return;
-
-  const entries = logs.slice(0, 30);
-  if (countEl) countEl.textContent = `${entries.length} events`;
-
-  body.innerHTML = entries.map(entry => {
-    const type = (entry.type || 'info').toLowerCase();
-    const severity = (entry.severity || 'info').toLowerCase();
-    const msgClass = severity === 'critical' ? ' critical' : severity === 'warning' ? ' warning' : '';
-
-    return `
-      <div class="log-entry">
-        <span class="log-timestamp mono">${formatCT(entry.timestamp)}</span>
-        <span class="log-type ${type}">
-          <span class="log-type-icon"></span>
-          ${escapeHtml(type.replace('_', ' '))}
-        </span>
-        <span class="log-message${msgClass}">${escapeHtml(entry.message)}</span>
-      </div>
-    `;
-  }).join('');
-}
-
-// ── Data Fetch & Render ────────────────────────────
-
-async function fetchStatus() {
-  try {
-    const cacheBust = Date.now();
-    const resp = await fetch(`${STATUS_FILE}?t=${cacheBust}`);
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const data = await resp.json();
-
-    failCount = 0;
-    setConnectionStatus(true);
-
-    renderAgentStatus(data.agent, data.updated_at);
-    renderBotCard('aws1', data.aws1);
-    renderBotCard('aws2', data.aws2);
-    renderCronJobs(data.cron_jobs);
-    renderActivityLog(data.activity_log);
-
-    lastData = data;
-  } catch (err) {
-    failCount++;
-    console.warn('[SCV] Fetch failed:', err.message);
+  function updateConnection() {
+    const dot = document.getElementById('connDot');
+    const label = document.getElementById('connLabel');
     if (failCount >= 3) {
-      setConnectionStatus(false);
+      dot.classList.add('error');
+      label.textContent = 'Disconnected';
+    } else {
+      dot.classList.remove('error');
+      label.textContent = 'Connected';
     }
   }
-}
 
-// ── Initialize ─────────────────────────────────────
+  // === RENDER ===
+  function render() {
+    if (!data) return;
+    renderBankroll();
+    renderAgent();
+    renderProjects();
+    renderInfra();
+    renderWork();
+    renderCron();
+    renderLogFilters();
+    renderLog();
+  }
 
-async function init() {
-  await fetchStatus();
-  pollTimer = setInterval(fetchStatus, POLL_INTERVAL);
-}
+  function renderBankroll() {
+    let total = 0;
+    if (data.infrastructure) {
+      data.infrastructure.forEach(i => {
+        if (i.metrics && i.metrics.bankroll_usd) total += i.metrics.bankroll_usd;
+      });
+    }
+    document.getElementById('bankrollDisplay').textContent =
+      'Bankroll: $' + total.toLocaleString();
+  }
 
-init();
+  function renderAgent() {
+    const a = data.agent;
+    if (!a) return;
+    const dot = document.getElementById('agentDot');
+    const statusText = document.getElementById('agentStatusText');
+    const middle = document.getElementById('agentMiddle');
+    const right = document.getElementById('agentRight');
+
+    dot.className = 'agent-dot ' + (a.status || 'idle');
+    statusText.textContent = (a.status || 'idle').toUpperCase();
+    statusText.style.color = a.status === 'active' ? 'var(--green)' : a.status === 'error' ? 'var(--red)' : 'var(--text-muted)';
+
+    if (a.current_task) {
+      middle.textContent = a.current_task;
+      middle.style.color = 'var(--text-secondary)';
+    } else {
+      middle.textContent = 'Idle since ' + timeAgo(a.last_activity);
+      middle.style.color = 'var(--text-muted)';
+    }
+
+    right.innerHTML = '<span>' + esc(a.model || '—') + '</span><span style="color:var(--text-muted)">|</span><span>' + esc(a.session_id || '—') + '</span>';
+  }
+
+  function renderProjects() {
+    const grid = document.getElementById('projectsGrid');
+    const statusOrder = { live: 0, in_progress: 1, planned: 2, paused: 3 };
+    const sorted = [...(data.projects || [])].sort((a, b) =>
+      (statusOrder[a.status] ?? 9) - (statusOrder[b.status] ?? 9)
+    );
+    document.getElementById('projectCount').textContent = sorted.length;
+
+    grid.innerHTML = sorted.map(p => {
+      const isLive = p.status === 'live';
+      const badgeClass = 'badge-' + (p.status || 'planned');
+      const statusLabel = (p.status || 'planned').replace('_', ' ').toUpperCase();
+      const healthDot = p.health
+        ? '<span class="health-dot ' + esc(p.health) + '"></span>'
+        : '';
+      const ghIcon = p.repo
+        ? '<a class="gh-link" href="https://github.com/' + esc(p.repo) + '" target="_blank" title="GitHub">⌂</a>'
+        : '';
+      const infraHtml = (p.infra || []).map(i =>
+        '<span class="infra-pill">' + esc(i) + '</span>'
+      ).join('');
+
+      return '<div class="project-card' + (isLive ? ' live-border' : '') + '">' +
+        '<div class="project-top">' +
+          '<span class="project-name">' + healthDot + ' ' + esc(p.name) + '</span>' +
+          '<span class="status-badge ' + badgeClass + '">' + statusLabel + '</span>' +
+        '</div>' +
+        '<span class="type-pill">' + esc(p.type || '—') + '</span>' +
+        '<div class="project-phase">' + esc(p.phase || '—') + '</div>' +
+        '<div class="project-next">→ ' + esc(p.next_action || '—') + '</div>' +
+        '<div class="project-bottom">' +
+          '<div class="infra-pills">' + infraHtml + '</div>' +
+          '<span class="time-ago">' + timeAgo(p.last_activity) + '</span>' +
+          ghIcon +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function renderInfra() {
+    const grid = document.getElementById('infraGrid');
+    const infra = data.infrastructure || [];
+    document.getElementById('infraCount').textContent = infra.length;
+
+    grid.innerHTML = infra.map(node => {
+      const m = node.metrics || {};
+      const healthClass = 'health-' + (node.status || 'healthy');
+      const healthLabel = (node.status || 'healthy').toUpperCase();
+
+      // Build metrics
+      let metricsHtml = '';
+      function addMetric(label, value, cls) {
+        metricsHtml += '<div class="metric-item"><span class="metric-label">' + label + '</span><span class="metric-value ' + (cls||'') + '">' + value + '</span></div>';
+      }
+
+      if (m.last_log_minutes !== undefined) {
+        const v = m.last_log_minutes;
+        const cls = v <= 5 ? 'good' : v <= 15 ? 'warn' : 'bad';
+        addMetric('Last Log', v + ' min', cls);
+      }
+      if (m.bankroll_usd !== undefined) {
+        addMetric('Bankroll', '$' + m.bankroll_usd.toLocaleString(), 'good');
+      }
+      if (m.errors_24h !== undefined) {
+        const cls = m.errors_24h === 0 ? 'good' : 'bad';
+        addMetric('Errors 24h', m.errors_24h.toString(), cls);
+      }
+      if (m.uptime !== undefined) {
+        addMetric('Uptime', m.uptime, '');
+      }
+      if (m.disk_pct !== undefined) {
+        const cls = m.disk_pct < 80 ? '' : m.disk_pct < 90 ? 'warn' : 'bad';
+        addMetric('Disk', m.disk_pct + '%', cls);
+      }
+      if (m.memory_pct !== undefined) {
+        const cls = m.memory_pct < 80 ? '' : m.memory_pct < 90 ? 'warn' : 'bad';
+        addMetric('Mem', m.memory_pct + '%', cls);
+      }
+      if (m.bot_script !== undefined) {
+        addMetric('Script', m.bot_script, '');
+      }
+      if (m.screen_alive !== undefined) {
+        const icon = m.screen_alive ? '✓' : '✗';
+        const cls = m.screen_alive ? 'good' : 'bad';
+        addMetric('Screen', icon, cls);
+      }
+
+      // Cities
+      const citiesHtml = (node.cities || []).length > 0
+        ? '<div class="cities-row">' + node.cities.map(c => '<span class="city-pill">' + esc(c) + '</span>').join('') + '</div>'
+        : '';
+
+      // Connected projects
+      const projHtml = (node.projects || []).length > 0
+        ? '<div class="infra-projects">Projects: ' + node.projects.map(id => '<a href="#" onclick="return false">' + esc(projectNameById(id)) + '</a>').join(', ') + '</div>'
+        : '';
+
+      return '<div class="infra-card">' +
+        '<div class="infra-header">' +
+          '<div><div class="infra-name">' + esc(node.name) + '</div><div class="infra-label">' + esc(node.label || '') + '</div></div>' +
+          '<span class="health-badge ' + healthClass + '">' + healthLabel + '</span>' +
+        '</div>' +
+        '<div class="metrics-grid">' + metricsHtml + '</div>' +
+        citiesHtml +
+        projHtml +
+      '</div>';
+    }).join('');
+  }
+
+  function renderWork() {
+    const items = data.work_items || [];
+    const cols = { todo: [], in_progress: [], done: [] };
+    items.forEach(w => {
+      const bucket = cols[w.status] || cols.todo;
+      bucket.push(w);
+    });
+
+    const colDefs = [
+      { key: 'todo', label: 'TODO' },
+      { key: 'in_progress', label: 'IN PROGRESS' },
+      { key: 'done', label: 'DONE' }
+    ];
+
+    document.getElementById('workColumns').innerHTML = colDefs.map(col => {
+      const list = cols[col.key] || [];
+      return '<div class="work-column">' +
+        '<div class="work-col-header"><span>' + col.label + '</span><span class="count-badge">' + list.length + '</span></div>' +
+        list.map(w => {
+          const isDone = w.status === 'done';
+          const assigneeClass = 'pill-' + (w.assignee || 'scv');
+          const assigneeLabel = (w.assignee || 'scv').toUpperCase();
+          return '<div class="work-item' + (isDone ? ' done-item' : '') + '">' +
+            '<div class="work-desc">' + esc(w.description) + '</div>' +
+            '<div class="work-pills">' +
+              (w.project ? '<span class="work-pill pill-project">' + esc(projectNameById(w.project)) + '</span>' : '') +
+              '<span class="work-pill ' + assigneeClass + '">' + assigneeLabel + '</span>' +
+            '</div>' +
+            '<div class="work-date">' + formatDateCT(w.created) + '</div>' +
+          '</div>';
+        }).join('') +
+      '</div>';
+    }).join('');
+  }
+
+  function renderCron() {
+    const jobs = data.cron_jobs || [];
+    document.getElementById('cronCount').textContent = jobs.length;
+    document.getElementById('cronBody').innerHTML = jobs.map(j => {
+      const statusCls = j.status === 'ok' ? 'cron-status-ok' : 'cron-status-error';
+      return '<tr>' +
+        '<td class="cron-name">' + esc(j.name) + '</td>' +
+        '<td>' + esc(projectNameById(j.project)) + '</td>' +
+        '<td>' + esc(j.schedule) + '</td>' +
+        '<td>' + formatDateCT(j.last_run) + '</td>' +
+        '<td class="' + statusCls + '">' + (j.status || '—').toUpperCase() + '</td>' +
+        '<td>' + formatDateCT(j.next_run) + '</td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  function renderLogFilters() {
+    const projects = data.projects || [];
+    const container = document.getElementById('logFilters');
+    let html = '<button class="log-filter-btn' + (activeFilter === 'all' ? ' active' : '') + '" data-filter="all">All</button>';
+    projects.forEach(p => {
+      html += '<button class="log-filter-btn' + (activeFilter === p.id ? ' active' : '') + '" data-filter="' + esc(p.id) + '">' + esc(p.name) + '</button>';
+    });
+    // Also add "No Project" for null project entries
+    html += '<button class="log-filter-btn' + (activeFilter === '__none__' ? ' active' : '') + '" data-filter="__none__">General</button>';
+    container.innerHTML = html;
+
+    container.querySelectorAll('.log-filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeFilter = btn.dataset.filter;
+        renderLogFilters();
+        renderLog();
+      });
+    });
+  }
+
+  function renderLog() {
+    const log = data.activity_log || [];
+    const container = document.getElementById('logContainer');
+
+    const filtered = activeFilter === 'all'
+      ? log
+      : activeFilter === '__none__'
+        ? log.filter(e => !e.project)
+        : log.filter(e => e.project === activeFilter);
+
+    container.innerHTML = filtered.map(entry => {
+      const sevClass = entry.severity === 'warning' ? ' severity-warning' : '';
+      return '<div class="log-entry">' +
+        '<span class="log-time">' + formatTimeCT(entry.timestamp) + '</span>' +
+        '<span class="log-type-dot log-type-' + esc(entry.type) + '"></span>' +
+        (entry.project ? '<span class="log-project-tag">' + esc(projectNameById(entry.project)) + '</span>' : '<span class="log-project-tag">General</span>') +
+        '<span class="log-msg' + sevClass + '">' + esc(entry.message) + '</span>' +
+      '</div>';
+    }).join('');
+  }
+
+  // === INIT ===
+  fetchData();
+  setInterval(fetchData, 10000);
+})();
 </script>
 </body>
 </html>
