@@ -103,11 +103,31 @@ class SCVStatus:
 
     # ── Agent ──────────────────────────────────────
 
-    def set_agent(self, status, task=None, model=None, session_id=None):
-        """Set agent status: 'active', 'idle', or 'error'."""
+    def set_agent(self, status, task=None, project=None, model=None, session_id=None):
+        """Set agent status: 'active', 'idle', or 'error'.
+        
+        Args:
+            status: 'active', 'idle', or 'error'
+            task: Current task description
+            project: Project ID this task belongs to (e.g. 'storm-chaser-us')
+            model: Override model name
+            session_id: Override session ID
+        """
         agent = self.data.setdefault("agent", {})
         agent["status"] = status
-        agent["current_task"] = task
+        
+        if task:
+            agent["current_task"] = task
+            agent["last_task"] = task  # Always save as last_task too
+        elif status == "idle":
+            # When going idle, keep last_task but clear current_task
+            if agent.get("current_task"):
+                agent["last_task"] = agent["current_task"]
+            agent["current_task"] = None
+        
+        if project is not None:
+            agent["current_project"] = project
+        
         if status == "active":
             agent["last_activity"] = now_ct()
         if model:
@@ -319,7 +339,7 @@ class SCVStatus:
                 "aws2": {"status": "healthy", "bankroll_usd": 665, "last_log_minutes": 2},
             })
         """
-        self.set_agent("active", "Running heartbeat check")
+        self.set_agent("active", "Running heartbeat check", project="openclaw-overseer")
 
         if infra_updates:
             for infra_id, metrics in infra_updates.items():
