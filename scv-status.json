@@ -3,6 +3,8 @@
   "agent": {
     "status": "idle",
     "current_task": null,
+    "current_project": "storm-chaser-intl",
+    "last_task": "Checked AWS2 screen session — intl_v2 active, no errors",
     "last_activity": "2026-03-15T07:30:00-05:00",
     "model": "openai-codex/gpt-5.4",
     "session_id": "scv-8f3a2b"
