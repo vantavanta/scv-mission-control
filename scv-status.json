@@ -1,34 +1,250 @@
 {
-  "updated_at": "2026-03-15T12:00:00-05:00",
+  "updated_at": "2026-03-15T07:45:00-05:00",
   "agent": {
     "status": "idle",
     "current_task": null,
-    "last_activity": "2026-03-15T11:45:00-05:00",
+    "last_activity": "2026-03-15T07:30:00-05:00",
     "model": "openai-codex/gpt-5.4",
     "session_id": "scv-8f3a2b"
   },
-  "aws1": {
-    "status": "healthy",
-    "last_log_update": "2026-03-15T11:59:00-05:00",
-    "log_stale_minutes": 1,
-    "cities": ["Dallas", "NYC", "Chicago", "Seattle", "Atlanta"],
-    "bankroll_usd": 566,
-    "bot_script": "intraday_watch.py",
-    "errors_recent": 0
-  },
-  "aws2": {
-    "status": "healthy",
-    "last_log_update": "2026-03-15T11:58:00-05:00",
-    "log_stale_minutes": 2,
-    "screen_alive": true,
-    "cities": ["London", "Paris", "Sao Paulo", "Wellington", "Toronto", "Ankara", "Seoul"],
-    "bankroll_usd": 665,
-    "bot_script": "intl_watch.py",
-    "errors_recent": 0
-  },
+  "projects": [
+    {
+      "id": "storm-chaser-us",
+      "name": "Storm Chaser US",
+      "type": "bot",
+      "status": "live",
+      "repo": "vantavanta/storm-chaser",
+      "infra": ["aws1"],
+      "phase": "Deployed — v2.1.0 running",
+      "next_action": "Monitor post-deploy metrics for 1 week",
+      "last_activity": "2026-03-15T06:12:00-05:00",
+      "health": "healthy"
+    },
+    {
+      "id": "storm-chaser-intl",
+      "name": "Storm Chaser Intl",
+      "type": "bot",
+      "status": "live",
+      "repo": "vantavanta/storm-chaser-intl",
+      "infra": ["aws2"],
+      "phase": "Deployed — v2.1.0 running",
+      "next_action": "Monitor intl confirmation latency improvements",
+      "last_activity": "2026-03-15T07:30:00-05:00",
+      "health": "healthy"
+    },
+    {
+      "id": "nado-xyz",
+      "name": "Nado.xyz",
+      "type": "platform",
+      "status": "in_progress",
+      "repo": null,
+      "infra": [],
+      "phase": "Architecture & design",
+      "next_action": "Build MT4-style interface prototype",
+      "last_activity": "2026-03-14T15:00:00-05:00",
+      "health": null
+    },
+    {
+      "id": "american-dream",
+      "name": "American Dream",
+      "type": "app",
+      "status": "in_progress",
+      "repo": null,
+      "infra": [],
+      "phase": "Strategic research complete",
+      "next_action": "Begin product spec for Ink Foundation",
+      "last_activity": "2026-03-14T12:00:00-05:00",
+      "health": null
+    },
+    {
+      "id": "boob-app",
+      "name": "Boob",
+      "type": "app",
+      "status": "in_progress",
+      "repo": null,
+      "infra": [],
+      "phase": "Market research complete",
+      "next_action": "Build MVP — 3-tap logging prototype",
+      "last_activity": "2026-03-13T16:00:00-05:00",
+      "health": null
+    },
+    {
+      "id": "arb-bot",
+      "name": "Arb Bot",
+      "type": "bot",
+      "status": "planned",
+      "repo": "vantavanta/arb-bot",
+      "infra": [],
+      "phase": "Repo created, no code yet",
+      "next_action": "Define strategy and begin implementation",
+      "last_activity": null,
+      "health": null
+    },
+    {
+      "id": "mm-bot",
+      "name": "MM Bot",
+      "type": "bot",
+      "status": "planned",
+      "repo": "vantavanta/mm-bot",
+      "infra": [],
+      "phase": "Repo created, no code yet",
+      "next_action": "Define market-making parameters",
+      "last_activity": null,
+      "health": null
+    },
+    {
+      "id": "storm-oracle",
+      "name": "Storm Oracle",
+      "type": "bot",
+      "status": "planned",
+      "repo": "vantavanta/storm-oracle",
+      "infra": [],
+      "phase": "Repo created, no code yet",
+      "next_action": "Design oracle data pipeline",
+      "last_activity": null,
+      "health": null
+    },
+    {
+      "id": "openclaw-overseer",
+      "name": "OpenClaw Overseer",
+      "type": "infra",
+      "status": "live",
+      "repo": "vantavanta/openclaw-overseer-redesign",
+      "infra": ["local"],
+      "phase": "v2 config deployed",
+      "next_action": "Verify new config stability over 48h",
+      "last_activity": "2026-03-15T07:00:00-05:00",
+      "health": "healthy"
+    }
+  ],
+  "infrastructure": [
+    {
+      "id": "aws1",
+      "name": "AWS1",
+      "label": "US Bot Server",
+      "type": "aws",
+      "ip": "52.17.158.222",
+      "status": "healthy",
+      "metrics": {
+        "last_log_minutes": 1,
+        "bankroll_usd": 566,
+        "errors_24h": 0,
+        "uptime": "14d 3h",
+        "disk_pct": 34,
+        "memory_pct": 45,
+        "bot_script": "intraday_watch.py",
+        "screen_alive": true
+      },
+      "cities": ["Dallas", "NYC", "Chicago", "Seattle", "Atlanta"],
+      "projects": ["storm-chaser-us"]
+    },
+    {
+      "id": "aws2",
+      "name": "AWS2",
+      "label": "Intl Bot Server",
+      "type": "aws",
+      "ip": "54.247.212.102",
+      "status": "healthy",
+      "metrics": {
+        "last_log_minutes": 2,
+        "bankroll_usd": 665,
+        "errors_24h": 0,
+        "uptime": "14d 3h",
+        "disk_pct": 28,
+        "memory_pct": 38,
+        "bot_script": "intl_watch.py",
+        "screen_alive": true
+      },
+      "cities": ["London", "Paris", "Sao Paulo", "Wellington", "Toronto", "Ankara", "Seoul"],
+      "projects": ["storm-chaser-intl"]
+    },
+    {
+      "id": "local",
+      "name": "Local",
+      "label": "MacBook Air (SCV Host)",
+      "type": "local",
+      "ip": "localhost",
+      "status": "healthy",
+      "metrics": {
+        "last_log_minutes": 0,
+        "uptime": "3d 12h",
+        "disk_pct": 52,
+        "memory_pct": 61
+      },
+      "cities": [],
+      "projects": ["openclaw-overseer"]
+    }
+  ],
+  "work_items": [
+    {
+      "id": "w1",
+      "description": "Monitor Storm Chaser v2.1.0 post-deploy metrics — dust-fill rate, confirmation latency",
+      "project": "storm-chaser-us",
+      "assignee": "scv",
+      "status": "in_progress",
+      "created": "2026-03-15T06:00:00-05:00"
+    },
+    {
+      "id": "w2",
+      "description": "Monitor intl confirmation latency — should be seconds not 60s+",
+      "project": "storm-chaser-intl",
+      "assignee": "scv",
+      "status": "in_progress",
+      "created": "2026-03-15T06:00:00-05:00"
+    },
+    {
+      "id": "w3",
+      "description": "Verify OpenClaw v2 config stability — 48h burn-in period",
+      "project": "openclaw-overseer",
+      "assignee": "scv",
+      "status": "in_progress",
+      "created": "2026-03-15T07:00:00-05:00"
+    },
+    {
+      "id": "w4",
+      "description": "Build MT4-style interface prototype for nado.xyz",
+      "project": "nado-xyz",
+      "assignee": "zach",
+      "status": "todo",
+      "created": "2026-03-14T15:00:00-05:00"
+    },
+    {
+      "id": "w5",
+      "description": "Begin product spec for American Dream — Ink Foundation",
+      "project": "american-dream",
+      "assignee": "zach",
+      "status": "todo",
+      "created": "2026-03-14T12:00:00-05:00"
+    },
+    {
+      "id": "w6",
+      "description": "Build Boob MVP — 3-tap logging for breastfeeding/diapers/sleep",
+      "project": "boob-app",
+      "assignee": "zach",
+      "status": "todo",
+      "created": "2026-03-13T16:00:00-05:00"
+    },
+    {
+      "id": "w7",
+      "description": "Deploy v2.1.0 codebase fixes to both AWS instances",
+      "project": "storm-chaser-us",
+      "assignee": "scv",
+      "status": "done",
+      "created": "2026-03-15T04:00:00-05:00"
+    },
+    {
+      "id": "w8",
+      "description": "Redesign OpenClaw configs — SOUL, AGENTS, MEMORY, HEARTBEAT, etc.",
+      "project": "openclaw-overseer",
+      "assignee": "perplexity",
+      "status": "done",
+      "created": "2026-03-14T10:00:00-05:00"
+    }
+  ],
   "cron_jobs": [
     {
       "name": "Morning Scan",
+      "project": "storm-chaser-us",
       "schedule": "6:00 AM CT daily",
       "last_run": "2026-03-15T06:00:00-05:00",
       "status": "ok",
@@ -36,6 +252,7 @@
     },
     {
       "name": "Intraday Watch",
+      "project": "storm-chaser-us",
       "schedule": "10:00 AM CT daily",
       "last_run": "2026-03-15T10:00:00-05:00",
       "status": "ok",
@@ -43,6 +260,7 @@
     },
     {
       "name": "Resolve Today",
+      "project": "storm-chaser-us",
       "schedule": "8:30 PM CT daily",
       "last_run": "2026-03-14T20:30:00-05:00",
       "status": "ok",
@@ -50,192 +268,161 @@
     },
     {
       "name": "Heartbeat",
+      "project": "openclaw-overseer",
       "schedule": "Every 1h",
-      "last_run": "2026-03-15T11:00:00-05:00",
+      "last_run": "2026-03-15T07:00:00-05:00",
       "status": "ok",
-      "next_run": "2026-03-15T12:00:00-05:00"
+      "next_run": "2026-03-15T08:00:00-05:00"
+    },
+    {
+      "name": "Intl Market Scan",
+      "project": "storm-chaser-intl",
+      "schedule": "4:00 AM CT daily",
+      "last_run": "2026-03-15T04:00:00-05:00",
+      "status": "ok",
+      "next_run": "2026-03-16T04:00:00-05:00"
     }
   ],
   "activity_log": [
     {
-      "timestamp": "2026-03-15T11:45:00-05:00",
+      "timestamp": "2026-03-15T07:30:00-05:00",
       "type": "tool_call",
+      "project": "storm-chaser-intl",
       "message": "Checked AWS2 screen session — intl_v2 active, no errors",
       "severity": "info"
     },
     {
-      "timestamp": "2026-03-15T11:00:00-05:00",
+      "timestamp": "2026-03-15T07:00:00-05:00",
       "type": "heartbeat",
+      "project": "openclaw-overseer",
       "message": "HEARTBEAT OK | AWS1: healthy | AWS2: healthy | Bankroll: $1,231",
-      "severity": "info"
-    },
-    {
-      "timestamp": "2026-03-15T10:15:00-05:00",
-      "type": "cron",
-      "message": "Intraday watch started successfully on AWS1",
-      "severity": "info"
-    },
-    {
-      "timestamp": "2026-03-15T10:02:00-05:00",
-      "type": "alert",
-      "message": "AWS1 log gap detected — 4 min since last write. Resolved on retry.",
-      "severity": "warning"
-    },
-    {
-      "timestamp": "2026-03-15T09:30:00-05:00",
-      "type": "heartbeat",
-      "message": "HEARTBEAT OK | AWS1: healthy | AWS2: healthy",
-      "severity": "info"
-    },
-    {
-      "timestamp": "2026-03-15T08:00:00-05:00",
-      "type": "heartbeat",
-      "message": "HEARTBEAT OK | AWS1: healthy | AWS2: healthy",
       "severity": "info"
     },
     {
       "timestamp": "2026-03-15T06:12:00-05:00",
       "type": "cron",
+      "project": "storm-chaser-us",
       "message": "Morning scan completed — 3 edges found, 1 trade placed on Dallas",
       "severity": "info"
     },
     {
       "timestamp": "2026-03-15T06:00:00-05:00",
       "type": "cron",
+      "project": "storm-chaser-us",
       "message": "Morning scan started on AWS1",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-15T04:15:00-05:00",
+      "type": "cron",
+      "project": "storm-chaser-intl",
+      "message": "Intl market scan completed — 2 edges found, London +£12 opportunity",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-15T04:00:00-05:00",
+      "type": "cron",
+      "project": "storm-chaser-intl",
+      "message": "Intl market scan started on AWS2",
       "severity": "info"
     },
     {
       "timestamp": "2026-03-14T20:45:00-05:00",
       "type": "cron",
+      "project": "storm-chaser-us",
       "message": "Resolve completed — Dallas: +$12, NYC: -$5, Chicago: +$8, Seattle: +$3",
       "severity": "info"
     },
     {
       "timestamp": "2026-03-14T20:30:00-05:00",
       "type": "cron",
+      "project": "storm-chaser-us",
       "message": "Resolve Today started",
       "severity": "info"
     },
     {
       "timestamp": "2026-03-14T18:00:00-05:00",
       "type": "heartbeat",
+      "project": "openclaw-overseer",
       "message": "HEARTBEAT OK | AWS1: healthy | AWS2: healthy",
       "severity": "info"
     },
     {
       "timestamp": "2026-03-14T17:22:00-05:00",
       "type": "user_message",
+      "project": null,
       "message": "Zach: 'Check on the intl bot — seems slow today'",
       "severity": "info"
     },
     {
       "timestamp": "2026-03-14T17:23:00-05:00",
       "type": "tool_call",
+      "project": "storm-chaser-intl",
       "message": "SSH'd into AWS2 — intl_watch.py running, CPU 12%, no errors in last 500 lines",
       "severity": "info"
     },
     {
       "timestamp": "2026-03-14T16:00:00-05:00",
       "type": "heartbeat",
+      "project": "openclaw-overseer",
       "message": "HEARTBEAT OK | AWS1: healthy | AWS2: healthy",
       "severity": "info"
     },
     {
       "timestamp": "2026-03-14T14:00:00-05:00",
       "type": "heartbeat",
+      "project": "openclaw-overseer",
       "message": "HEARTBEAT OK | AWS1: healthy | AWS2: healthy",
       "severity": "info"
     },
     {
       "timestamp": "2026-03-14T12:33:00-05:00",
       "type": "alert",
+      "project": "storm-chaser-intl",
       "message": "AWS2 screen session intl_v2 not found — restarted successfully",
       "severity": "warning"
     },
     {
       "timestamp": "2026-03-14T12:00:00-05:00",
       "type": "heartbeat",
+      "project": "openclaw-overseer",
       "message": "HEARTBEAT OK | AWS1: healthy | AWS2: WARNING (screen missing)",
       "severity": "warning"
     },
     {
       "timestamp": "2026-03-14T10:15:00-05:00",
       "type": "cron",
+      "project": "storm-chaser-us",
       "message": "Intraday watch started successfully on AWS1",
       "severity": "info"
     },
     {
       "timestamp": "2026-03-14T06:10:00-05:00",
       "type": "cron",
+      "project": "storm-chaser-us",
       "message": "Morning scan completed — 5 edges found, 2 trades placed",
       "severity": "info"
     },
     {
       "timestamp": "2026-03-14T06:00:00-05:00",
       "type": "cron",
+      "project": "storm-chaser-us",
       "message": "Morning scan started on AWS1",
       "severity": "info"
     },
     {
       "timestamp": "2026-03-13T20:42:00-05:00",
       "type": "cron",
+      "project": "storm-chaser-intl",
       "message": "Resolve completed — London: +£18, Paris: +€7, Toronto: -C$4",
       "severity": "info"
     },
     {
       "timestamp": "2026-03-13T20:30:00-05:00",
       "type": "cron",
+      "project": "storm-chaser-intl",
       "message": "Resolve Today started",
       "severity": "info"
-    },
-    {
-      "timestamp": "2026-03-13T18:00:00-05:00",
-      "type": "heartbeat",
-      "message": "HEARTBEAT OK | AWS1: healthy | AWS2: healthy",
-      "severity": "info"
-    },
-    {
-      "timestamp": "2026-03-13T14:00:00-05:00",
-      "type": "heartbeat",
-      "message": "HEARTBEAT OK | AWS1: healthy | AWS2: healthy",
-      "severity": "info"
-    },
-    {
-      "timestamp": "2026-03-13T10:05:00-05:00",
-      "type": "cron",
-      "message": "Intraday watch started on AWS1",
-      "severity": "info"
-    },
-    {
-      "timestamp": "2026-03-13T06:08:00-05:00",
-      "type": "cron",
-      "message": "Morning scan completed — 2 edges found, 0 trades placed",
-      "severity": "info"
-    },
-    {
-      "timestamp": "2026-03-13T06:00:00-05:00",
-      "type": "cron",
-      "message": "Morning scan started on AWS1",
-      "severity": "info"
-    },
-    {
-      "timestamp": "2026-03-12T21:15:00-05:00",
-      "type": "alert",
-      "message": "AWS1 intraday_watch.py crashed — OOM kill. Restarted with --max-memory 512M",
-      "severity": "critical"
-    },
-    {
-      "timestamp": "2026-03-12T20:40:00-05:00",
-      "type": "cron",
-      "message": "Resolve completed — all cities settled, net +$41",
-      "severity": "info"
-    },
-    {
-      "timestamp": "2026-03-12T18:00:00-05:00",
-      "type": "heartbeat",
-      "message": "HEARTBEAT OK | AWS1: WARNING (high mem) | AWS2: healthy",
-      "severity": "warning"
     }
   ]
 }
