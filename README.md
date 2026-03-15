@@ -1,88 +1,98 @@
-# SCV Mission Control — Monitoring Dashboard
+# SCV Mission Control v2
 
-Real-time monitoring dashboard for the OpenClaw SCV agent. Displays agent status, AWS bot health, cron job status, and an activity log.
+Master dashboard for monitoring all Vanta Fund projects, infrastructure, and operations.
 
 ## Quick Start
 
 ```bash
-cd scv-dashboard
-chmod +x serve.sh
-./serve.sh
+git clone https://github.com/vantavanta/scv-mission-control.git
+cd scv-mission-control
+bash serve.sh
 ```
 
-This starts a Python HTTP server on port 8888. Open http://localhost:8888 from your Mac, or http://<your-local-ip>:8888 from any device on the LAN.
+Open `http://localhost:8888` on your Mac, or `http://<your-mac-ip>:8888` from any LAN device.
 
-To find your Mac's local IP:
+## What It Shows
+
+| Section | Description |
+|---------|-------------|
+| **Agent Status** | SCV active/idle/error, current task, model |
+| **Projects** | All 9 projects with status (LIVE/IN PROGRESS/PLANNED), phase, next action, health |
+| **Infrastructure** | Dynamic AWS/local nodes with bankroll, errors, disk, memory, uptime, cities |
+| **Work Tracker** | Kanban board: TODO / IN PROGRESS / DONE with assignee tags |
+| **Cron Jobs** | Scheduled tasks with project association and run status |
+| **Activity Log** | Filterable event feed with per-project tags |
+
+## Dynamic — Just Add to the JSON
+
+Everything renders from `scv-status.json`. To add a new AWS instance or project, just add it to the JSON — no code changes needed.
+
+## Status Writer (for SCV)
+
+Import and use the Python API:
+
+```python
+from scv_status_writer import SCVStatus
+
+scv = SCVStatus()
+
+# Heartbeat (most common operation)
+scv.heartbeat({
+    "aws1": {"status": "healthy", "bankroll_usd": 566, "last_log_minutes": 1, "errors_24h": 0},
+    "aws2": {"status": "healthy", "bankroll_usd": 665, "last_log_minutes": 2},
+})
+scv.go_idle()
+scv.save()
+
+# Update a project
+scv.update_project("storm-chaser-us", health="healthy", phase="v2.1.0 — monitoring")
+scv.save()
+
+# Add activity
+scv.log("Morning scan found 3 edges", log_type="cron", project="storm-chaser-us")
+scv.save()
+
+# Add new infrastructure (when spinning up AWS3, etc.)
+scv.add_infra("aws3", name="AWS3", label="Asia Bot", ip="1.2.3.4",
+              infra_type="aws", cities=["Tokyo", "Sydney", "Singapore"])
+scv.save()
+
+# Add new project
+scv.add_project("new-strategy", name="New Strategy", proj_type="bot", status="planned",
+                phase="Concept", next_action="Define parameters")
+scv.save()
+
+# Manage work items
+scv.add_work_item("Build data pipeline", project="storm-oracle", assignee="zach")
+scv.complete_work_item("w7")
+scv.save()
+```
+
+Or use the CLI:
+
 ```bash
-ipconfig getifaddr en0
+python3 scv_status_writer.py heartbeat --aws1-bankroll 566 --aws2-bankroll 665
+python3 scv_status_writer.py log --type cron --project storm-chaser-us --msg "Scan done"
+python3 scv_status_writer.py agent --status active --task "Running check"
+python3 scv_status_writer.py infra --id aws1 --bankroll 580 --errors 0
+python3 scv_status_writer.py project --id storm-chaser-us --health healthy
+python3 scv_status_writer.py work --add "New task" --project storm-chaser-us --assignee scv
+python3 scv_status_writer.py work --complete w7
 ```
 
 ## Files
 
 | File | Purpose |
-|---|---|
-| `index.html` | Complete dashboard — single HTML file, no build step |
-| `scv-status.json` | Status data file (demo data included, SCV overwrites this) |
-| `scv_status_writer.py` | Python helper for SCV to write status data |
-| `serve.sh` | One-liner to start the dashboard server |
+|------|---------|
+| `index.html` | Dashboard (single file, zero dependencies) |
+| `scv-status.json` | Data file read by dashboard, written by SCV |
+| `scv_status_writer.py` | Python API + CLI for SCV to write status |
+| `serve.sh` | One-liner to start the server |
 
-## How it Works
+## Architecture
 
-1. The dashboard loads `scv-status.json` on startup
-2. It polls for updates every 10 seconds
-3. SCV writes to `scv-status.json` during heartbeat checks via `scv_status_writer.py`
-4. The dashboard automatically reflects new data — no restart needed
-
-## Connecting SCV
-
-### Option 1: Use the Python helper during heartbeat
-
-```python
-from scv_status_writer import heartbeat_ok
-
-# In your heartbeat function:
-heartbeat_ok(
-    aws1_status="healthy",
-    aws2_status="healthy",
-    aws1_bankroll=566,
-    aws2_bankroll=665,
-)
+```
+Dashboard (browser) ←── polls every 10s ──→ scv-status.json ←── writes ──→ SCV agent
 ```
 
-### Option 2: CLI for cron or manual updates
-
-```bash
-# Write a heartbeat
-python3 scv_status_writer.py --heartbeat --aws1-bankroll 566 --aws2-bankroll 665
-
-# Mark agent as active with a task
-python3 scv_status_writer.py --agent-status active --task "Running morning scan on AWS1"
-
-# Log an error
-python3 scv_status_writer.py --log-type alert --log-msg "AWS1 screen crashed" --log-severity critical
-
-# Mark agent idle after task completes
-python3 scv_status_writer.py --agent-status idle
-```
-
-### Option 3: Write JSON directly
-
-SCV can write `scv-status.json` directly. See the file for the expected schema. The dashboard handles any valid JSON matching the schema — missing fields are gracefully ignored.
-
-## Dashboard Features
-
-- **Dark theme** optimized for monitoring
-- **Auto-refresh** every 10 seconds with connection status indicator
-- **Responsive** — works on desktop and mobile
-- **Agent status** with animated pulse indicators (active/idle/error)
-- **AWS bot health** cards with city tags, bankroll, and log freshness
-- **Cron job table** with schedule, last run, status, and next run
-- **Activity log** with color-coded severity and event types
-- **Central Time** display throughout (America/Chicago)
-- **No dependencies** — pure HTML + CSS + JS in a single file
-
-## Customization
-
-- **Poll interval**: Change `POLL_INTERVAL` in the `<script>` section of `index.html` (default: 10000ms)
-- **Status file path**: Change `STATUS_FILE` if serving from a different directory
-- **Colors**: All colors are defined as CSS custom properties at the top of the `<style>` block
+SCV writes the JSON during heartbeats and task execution. The dashboard polls it. Zero coupling — add new projects or infrastructure by editing the JSON.
