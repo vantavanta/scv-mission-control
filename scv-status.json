@@ -1,0 +1,241 @@
+{
+  "updated_at": "2026-03-15T12:00:00-05:00",
+  "agent": {
+    "status": "idle",
+    "current_task": null,
+    "last_activity": "2026-03-15T11:45:00-05:00",
+    "model": "openai-codex/gpt-5.4",
+    "session_id": "scv-8f3a2b"
+  },
+  "aws1": {
+    "status": "healthy",
+    "last_log_update": "2026-03-15T11:59:00-05:00",
+    "log_stale_minutes": 1,
+    "cities": ["Dallas", "NYC", "Chicago", "Seattle", "Atlanta"],
+    "bankroll_usd": 566,
+    "bot_script": "intraday_watch.py",
+    "errors_recent": 0
+  },
+  "aws2": {
+    "status": "healthy",
+    "last_log_update": "2026-03-15T11:58:00-05:00",
+    "log_stale_minutes": 2,
+    "screen_alive": true,
+    "cities": ["London", "Paris", "Sao Paulo", "Wellington", "Toronto", "Ankara", "Seoul"],
+    "bankroll_usd": 665,
+    "bot_script": "intl_watch.py",
+    "errors_recent": 0
+  },
+  "cron_jobs": [
+    {
+      "name": "Morning Scan",
+      "schedule": "6:00 AM CT daily",
+      "last_run": "2026-03-15T06:00:00-05:00",
+      "status": "ok",
+      "next_run": "2026-03-16T06:00:00-05:00"
+    },
+    {
+      "name": "Intraday Watch",
+      "schedule": "10:00 AM CT daily",
+      "last_run": "2026-03-15T10:00:00-05:00",
+      "status": "ok",
+      "next_run": "2026-03-16T10:00:00-05:00"
+    },
+    {
+      "name": "Resolve Today",
+      "schedule": "8:30 PM CT daily",
+      "last_run": "2026-03-14T20:30:00-05:00",
+      "status": "ok",
+      "next_run": "2026-03-15T20:30:00-05:00"
+    },
+    {
+      "name": "Heartbeat",
+      "schedule": "Every 1h",
+      "last_run": "2026-03-15T11:00:00-05:00",
+      "status": "ok",
+      "next_run": "2026-03-15T12:00:00-05:00"
+    }
+  ],
+  "activity_log": [
+    {
+      "timestamp": "2026-03-15T11:45:00-05:00",
+      "type": "tool_call",
+      "message": "Checked AWS2 screen session — intl_v2 active, no errors",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-15T11:00:00-05:00",
+      "type": "heartbeat",
+      "message": "HEARTBEAT OK | AWS1: healthy | AWS2: healthy | Bankroll: $1,231",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-15T10:15:00-05:00",
+      "type": "cron",
+      "message": "Intraday watch started successfully on AWS1",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-15T10:02:00-05:00",
+      "type": "alert",
+      "message": "AWS1 log gap detected — 4 min since last write. Resolved on retry.",
+      "severity": "warning"
+    },
+    {
+      "timestamp": "2026-03-15T09:30:00-05:00",
+      "type": "heartbeat",
+      "message": "HEARTBEAT OK | AWS1: healthy | AWS2: healthy",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-15T08:00:00-05:00",
+      "type": "heartbeat",
+      "message": "HEARTBEAT OK | AWS1: healthy | AWS2: healthy",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-15T06:12:00-05:00",
+      "type": "cron",
+      "message": "Morning scan completed — 3 edges found, 1 trade placed on Dallas",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-15T06:00:00-05:00",
+      "type": "cron",
+      "message": "Morning scan started on AWS1",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-14T20:45:00-05:00",
+      "type": "cron",
+      "message": "Resolve completed — Dallas: +$12, NYC: -$5, Chicago: +$8, Seattle: +$3",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-14T20:30:00-05:00",
+      "type": "cron",
+      "message": "Resolve Today started",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-14T18:00:00-05:00",
+      "type": "heartbeat",
+      "message": "HEARTBEAT OK | AWS1: healthy | AWS2: healthy",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-14T17:22:00-05:00",
+      "type": "user_message",
+      "message": "Zach: 'Check on the intl bot — seems slow today'",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-14T17:23:00-05:00",
+      "type": "tool_call",
+      "message": "SSH'd into AWS2 — intl_watch.py running, CPU 12%, no errors in last 500 lines",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-14T16:00:00-05:00",
+      "type": "heartbeat",
+      "message": "HEARTBEAT OK | AWS1: healthy | AWS2: healthy",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-14T14:00:00-05:00",
+      "type": "heartbeat",
+      "message": "HEARTBEAT OK | AWS1: healthy | AWS2: healthy",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-14T12:33:00-05:00",
+      "type": "alert",
+      "message": "AWS2 screen session intl_v2 not found — restarted successfully",
+      "severity": "warning"
+    },
+    {
+      "timestamp": "2026-03-14T12:00:00-05:00",
+      "type": "heartbeat",
+      "message": "HEARTBEAT OK | AWS1: healthy | AWS2: WARNING (screen missing)",
+      "severity": "warning"
+    },
+    {
+      "timestamp": "2026-03-14T10:15:00-05:00",
+      "type": "cron",
+      "message": "Intraday watch started successfully on AWS1",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-14T06:10:00-05:00",
+      "type": "cron",
+      "message": "Morning scan completed — 5 edges found, 2 trades placed",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-14T06:00:00-05:00",
+      "type": "cron",
+      "message": "Morning scan started on AWS1",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-13T20:42:00-05:00",
+      "type": "cron",
+      "message": "Resolve completed — London: +£18, Paris: +€7, Toronto: -C$4",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-13T20:30:00-05:00",
+      "type": "cron",
+      "message": "Resolve Today started",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-13T18:00:00-05:00",
+      "type": "heartbeat",
+      "message": "HEARTBEAT OK | AWS1: healthy | AWS2: healthy",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-13T14:00:00-05:00",
+      "type": "heartbeat",
+      "message": "HEARTBEAT OK | AWS1: healthy | AWS2: healthy",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-13T10:05:00-05:00",
+      "type": "cron",
+      "message": "Intraday watch started on AWS1",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-13T06:08:00-05:00",
+      "type": "cron",
+      "message": "Morning scan completed — 2 edges found, 0 trades placed",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-13T06:00:00-05:00",
+      "type": "cron",
+      "message": "Morning scan started on AWS1",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-12T21:15:00-05:00",
+      "type": "alert",
+      "message": "AWS1 intraday_watch.py crashed — OOM kill. Restarted with --max-memory 512M",
+      "severity": "critical"
+    },
+    {
+      "timestamp": "2026-03-12T20:40:00-05:00",
+      "type": "cron",
+      "message": "Resolve completed — all cities settled, net +$41",
+      "severity": "info"
+    },
+    {
+      "timestamp": "2026-03-12T18:00:00-05:00",
+      "type": "heartbeat",
+      "message": "HEARTBEAT OK | AWS1: WARNING (high mem) | AWS2: healthy",
+      "severity": "warning"
+    }
+  ]
+}
