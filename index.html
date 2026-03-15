@@ -191,6 +191,79 @@ html, body {
   color: var(--text-muted);
 }
 
+/* === CURRENT FOCUS === */
+.focus-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--teal);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.focus-card.focus-active { border-left-color: var(--green); }
+.focus-card.focus-idle { border-left-color: var(--text-muted); }
+.focus-label {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.focus-project {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.focus-project .focus-status-pill {
+  font-size: 9px;
+  font-weight: 500;
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.focus-divider {
+  width: 1px;
+  height: 28px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+.focus-task {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-secondary);
+  flex: 1;
+  min-width: 150px;
+}
+.focus-task-label {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+  font-family: var(--font-ui);
+}
+.focus-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  text-align: right;
+}
+@media (max-width: 700px) {
+  .focus-card { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .focus-divider { width: 100%; height: 1px; }
+  .focus-meta { text-align: left; }
+}
+
 /* === GRID === */
 .grid-3 {
   display: grid;
@@ -654,6 +727,9 @@ html, body {
       <div class="agent-right" id="agentRight">—</div>
     </div>
 
+    <!-- Current Focus -->
+    <div id="focusSection"></div>
+
     <!-- Projects -->
     <div class="section">
       <div class="section-header">Projects <span class="count-badge" id="projectCount">0</span></div>
@@ -815,6 +891,7 @@ html, body {
     if (!data) return;
     renderBankroll();
     renderAgent();
+    renderFocus();
     renderProjects();
     renderInfra();
     renderWork();
@@ -855,6 +932,83 @@ html, body {
     }
 
     right.innerHTML = '<span>' + esc(a.model || '—') + '</span><span style="color:var(--text-muted)">|</span><span>' + esc(a.session_id || '—') + '</span>';
+  }
+
+  function renderFocus() {
+    const container = document.getElementById('focusSection');
+    const agent = data.agent || {};
+    const currentProjId = agent.current_project;
+    const isActive = agent.status === 'active';
+    const isError = agent.status === 'error';
+
+    // Find the project
+    let proj = null;
+    if (currentProjId && data.projects) {
+      proj = data.projects.find(p => p.id === currentProjId);
+    }
+
+    // Determine task label
+    const taskLabel = isActive ? 'CURRENT TASK' : 'LAST KNOWN TASK';
+    const taskText = agent.current_task || agent.last_task || 'No task recorded';
+    const focusClass = isActive ? 'focus-active' : isError ? 'focus-idle' : 'focus-idle';
+
+    if (proj) {
+      // We have a project to show
+      const badgeClass = 'badge-' + (proj.status || 'planned');
+      const statusLabel = (proj.status || 'planned').replace('_', ' ').toUpperCase();
+      container.innerHTML =
+        '<div class="focus-card ' + focusClass + '">' +
+          '<div>' +
+            '<div class="focus-label">CURRENT PROJECT</div>' +
+            '<div class="focus-project">' + esc(proj.name) +
+              '<span class="focus-status-pill status-badge ' + badgeClass + '">' + statusLabel + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="focus-divider"></div>' +
+          '<div class="focus-task" style="flex:1">' +
+            '<div class="focus-task-label">' + taskLabel + '</div>' +
+            '<div>' + esc(taskText) + '</div>' +
+          '</div>' +
+          '<div class="focus-meta">' +
+            '<div>' + (isActive ? '⚡ Active now' : '💤 Idle ' + timeAgo(agent.last_activity)) + '</div>' +
+            (proj.next_action ? '<div style="margin-top:2px;color:var(--text-muted)">Next: ' + esc(proj.next_action) + '</div>' : '') +
+          '</div>' +
+        '</div>';
+    } else if (agent.current_task) {
+      // No specific project but has a task
+      container.innerHTML =
+        '<div class="focus-card ' + focusClass + '">' +
+          '<div>' +
+            '<div class="focus-label">CURRENT FOCUS</div>' +
+            '<div class="focus-project">General</div>' +
+          '</div>' +
+          '<div class="focus-divider"></div>' +
+          '<div class="focus-task" style="flex:1">' +
+            '<div class="focus-task-label">' + taskLabel + '</div>' +
+            '<div>' + esc(taskText) + '</div>' +
+          '</div>' +
+          '<div class="focus-meta">' +
+            '<div>' + (isActive ? '⚡ Active now' : '💤 Idle ' + timeAgo(agent.last_activity)) + '</div>' +
+          '</div>' +
+        '</div>';
+    } else {
+      // Idle with no task
+      container.innerHTML =
+        '<div class="focus-card focus-idle">' +
+          '<div>' +
+            '<div class="focus-label">CURRENT FOCUS</div>' +
+            '<div class="focus-project" style="color:var(--text-muted)">No active project</div>' +
+          '</div>' +
+          '<div class="focus-divider"></div>' +
+          '<div class="focus-task" style="flex:1;color:var(--text-muted)">' +
+            '<div class="focus-task-label">LAST KNOWN TASK</div>' +
+            '<div>' + esc(agent.last_task || 'None') + '</div>' +
+          '</div>' +
+          '<div class="focus-meta">' +
+            '<div>💤 Idle ' + timeAgo(agent.last_activity) + '</div>' +
+          '</div>' +
+        '</div>';
+    }
   }
 
   function renderProjects() {
